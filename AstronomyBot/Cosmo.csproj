@@ -148,7 +148,7 @@
     <Content Include="default.htm" />
     <Content Include="Facts.txt" />
     <Content Include="Global.asax" />
-    <Content Include="AstronomyBot.bot" />
+    <Content Include="Cosmo.bot" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
     </Content>
@@ -159,7 +159,6 @@
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\MessagesController.cs" />
     <Compile Include="currentConditions.cs" />
-    <Compile Include="Dialogs\BasicQnAMakerDialog.cs" />
     <Compile Include="Dialogs\RootDialog.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -171,7 +170,6 @@
     <Content Include="packages.config">
       <SubType>Designer</SubType>
     </Content>
-    <Content Include="Jokes.xlsx" />
     <Content Include="Joke.xlsx" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
