@@ -13,7 +13,7 @@ using System.Collections.Generic;
 using Microsoft.Office.Interop.Excel;
 using _Excel = Microsoft.Office.Interop.Excel;
 
-namespace Cosmo.Dialogs
+namespace AstronomyBot.Dialogs
 {
     
 

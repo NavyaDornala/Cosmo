@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 using System.Net.Http;
 using System.Threading.Tasks;
 
-namespace Cosmo
+namespace AstronomyBot
 {
     public class OpenWeather
 

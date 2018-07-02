@@ -7,7 +7,7 @@ using System.Linq;
 using Microsoft.Bot.Builder.Dialogs;
 using Microsoft.Bot.Connector;
 
-namespace Cosmo
+namespace AstronomyBot
 {
    
 
