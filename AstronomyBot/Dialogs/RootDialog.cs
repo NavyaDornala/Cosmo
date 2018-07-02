@@ -13,7 +13,7 @@ using System.Collections.Generic;
 using Microsoft.Office.Interop.Excel;
 using _Excel = Microsoft.Office.Interop.Excel;
 
-namespace AstronomyBot.Dialogs
+namespace Cosmo.Dialogs
 {
     
 
@@ -81,6 +81,7 @@ namespace AstronomyBot.Dialogs
             }
 
         }
+        
 
         [LuisIntent("Jokes.GetJoke")]
         public async Task JokeIntent(IDialogContext context, LuisResult result)

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Web;
 using Newtonsoft.Json;
 
-namespace AstronomyBot
+namespace Cosmo
 {
     public class ApodAttributes
     {

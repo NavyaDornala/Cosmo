@@ -5,7 +5,7 @@ using System.Web;
 using Newtonsoft.Json;
 
 
-namespace AstronomyBot
+namespace Cosmo
 {
     public class currentConditions
     {
