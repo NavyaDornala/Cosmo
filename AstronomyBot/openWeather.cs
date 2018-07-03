@@ -11,8 +11,6 @@ namespace AstronomyBot
 
         private const string APIKEY = "6152def9feb0674a20f2c6257a248603";
 
-
-
         public static async Task<currentConditions> GetWeatherAsync(string placeName)
 
         {

@@ -13,7 +13,7 @@ namespace AstronomyBot
 
         {
 
-            Uri url = new Uri(string.Format("https://api.nasa.gov/planetary/apod?api_key=rXDVLSbsZjhcNkrs0dl52tPbrpiI2g9xGSW7vHpo"));
+            Uri url = new Uri(string.Format("https://api.nasa.gov/planetary/apod?api_key=ASkiH6sOHY8alzAxulfwz16ZvOrrr4t2isH6qEHN"));
             var client = new HttpClient();
             HttpResponseMessage response = await client.GetAsync(url);
             response.EnsureSuccessStatusCode();
