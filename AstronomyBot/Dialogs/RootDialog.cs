@@ -12,12 +12,13 @@ using Microsoft.Bot.Builder.Luis.Models;
 using System.Collections.Generic;
 using Microsoft.Office.Interop.Excel;
 using _Excel = Microsoft.Office.Interop.Excel;
+using System.IO;
 
 namespace AstronomyBot.Dialogs
 {
-    
 
-    [LuisModel("6e0e7f8a-3483-41fe-a5ab-a576c6b616d3", "ec622bf0f30f46a6bc27ddd75ecb57f3")]
+
+    [LuisModel("364a2880-2fa0-4c7c-a2b7-d4a25b740856", "c23e0248ff6f437fa1b3dd9585a0c7ba")]
     [Serializable]
     public class RootDialog : LuisDialog<object>
     {
@@ -37,7 +38,7 @@ namespace AstronomyBot.Dialogs
 
            
         }
-        [LuisIntent("Term.GetWiki")]
+        [LuisIntent("Wikipedia")]
        public async Task WikiIntent(IDialogContext context, LuisResult result)
        {
       
@@ -83,7 +84,7 @@ namespace AstronomyBot.Dialogs
         }
         
 
-        [LuisIntent("Jokes.GetJoke")]
+        [LuisIntent("Jokes")]
         public async Task JokeIntent(IDialogContext context, LuisResult result)
         {
             string path1 = @"C:\Users\NAVYA\source\repos\AstronomyBot\AstronomyBot\Joke.xlsx";
@@ -106,10 +107,11 @@ namespace AstronomyBot.Dialogs
             }
 
         }
-        [LuisIntent("Facts.GetFact")]
+        
+        [LuisIntent("Facts")]
         public async Task FactIntent(IDialogContext context, LuisResult result)
         {
-            string[] lines = System.IO.File.ReadAllLines(@"C:\Users\NAVYA\source\repos\AstronomyBot\AstronomyBot\Facts.txt");
+            string[] lines = File.ReadAllLines(@"C:\Users\NAVYA\source\repos\AstronomyBot\AstronomyBot\Facts.txt");
             Random number = new Random();
             int num = number.Next(1, 57);
             if (countfact == 0)
@@ -119,14 +121,23 @@ namespace AstronomyBot.Dialogs
             countfact++;
             await context.PostAsync($"{lines[num]}");
         }
-        [LuisIntent("Sunrise.GetTime")]
+        [LuisIntent("Sunset")]
+        public async Task SunsetIntent(IDialogContext context, LuisResult result)
+        {
+            currentConditions conditions = await OpenWeather.GetSunAsync();
+            await context.PostAsync(string.Format("Today's sunset Time : {0}", conditions.results.Sunset));
+            //context.Wait(MessageReceivedAsync);
+
+        }
+
+        [LuisIntent("Sunrise")]
         public async Task SunriseIntent(IDialogContext context,LuisResult result)
         {
             currentConditions conditions = await OpenWeather.GetSunAsync();
             await context.PostAsync(string.Format("Today sunrise Time : {0}", conditions.results.Sunrise));
            // context.Wait(MessageReceivedAsync);
         }
-        [LuisIntent("Apod.Display")]
+        [LuisIntent("Apod")]
         public async Task GreetingIntent(IDialogContext context, LuisResult result)
         {
             var replyMessage = context.MakeMessage();
@@ -136,15 +147,7 @@ namespace AstronomyBot.Dialogs
             await context.PostAsync(replyMessage);
             // context.Wait(MessageReceivedAsync);
         }
-        [LuisIntent("Sunset.GetTime")]
-        public async Task SunsetIntent(IDialogContext context, LuisResult result)
-        {
-             currentConditions conditions = await OpenWeather.GetSunAsync();
-             await context.PostAsync(string.Format("Today's sunset Time : {0}", conditions.results.Sunset));
-             //context.Wait(MessageReceivedAsync);
-
-         }
-
+        
         public async Task<Attachment> GetWikiAttachemnt(string res,string query)
         {
             // ApodAttributes apod = await Apod.GetDetails();
