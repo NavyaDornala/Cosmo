@@ -52,7 +52,7 @@ namespace AstronomyBot
                         // if the bot is added, then   
                         if (member.Id == iConversationUpdated.Recipient.Id)
                         {
-                            var reply = ((Activity)iConversationUpdated).CreateReply($"Hi! I'm Cosmo , your astronomy geek.\n How can I help you?");
+                            var reply = ((Activity)iConversationUpdated).CreateReply($"Hi! I'm Cosmo , your astronomy geek.");
                             await connector.Conversations.ReplyToActivityAsync(reply);
                         }
                     }

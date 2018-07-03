@@ -37,7 +37,7 @@ namespace AstronomyBot.Dialogs
         {
             //if (result.Query.Equals("hello"))
             
-                await context.PostAsync("Cosmo would tell you :\nAstronomy picture of the day(apod)\nFun Facts on astronomy\nJokes on astronomy\nSunrise and sunset timings");
+                await context.PostAsync("Hey! Try this : \nAstronomy picture of the day(apod)\nFun Facts on astronomy\nJokes on astronomy\nSunrise and sunset timings");
             
         }
         [LuisIntent("Wikipedia")]
