@@ -6,6 +6,9 @@ using Microsoft.Bot.Connector;
 using System.Net;
 using System.Web;
 using System.Xml;
+using Microsoft.WindowsAzure.Storage.Auth;
+using Microsoft.WindowsAzure.Storage;
+using Microsoft.WindowsAzure.Storage.File;
 using System.Text.RegularExpressions;
 using Microsoft.Bot.Builder.Luis;
 using Microsoft.Bot.Builder.Luis.Models;
@@ -16,14 +19,12 @@ using System.IO;
 
 namespace AstronomyBot.Dialogs
 {
-
     [LuisModel("364a2880-2fa0-4c7c-a2b7-d4a25b740856", "c23e0248ff6f437fa1b3dd9585a0c7ba")]
     [Serializable]
     public class RootDialog : LuisDialog<object>
     {
-       
         private const string ShowInternetAttachment = "(3) Show Internal attachment";
-
+        int countfact = 0, countjoke = 0;
         [LuisIntent("")]
         [LuisIntent("None")]
         public async Task NoneIntent(IDialogContext context, LuisResult result)
@@ -32,19 +33,18 @@ namespace AstronomyBot.Dialogs
             await context.PostAsync(message);
             context.Wait(this.MessageReceived);
         }
+
         [LuisIntent("Greeting")]
-        public async Task MessageIntent(IDialogContext context,LuisResult result)
+        public async Task MessageIntent(IDialogContext context, LuisResult result)
         {
-            //if (result.Query.Equals("hello"))
-            
-                await context.PostAsync("Hey! Try this : \nAstronomy picture of the day(apod)\nFun Facts on astronomy\nJokes on astronomy\nSunrise and sunset timings");
-            
+            await context.PostAsync("Hey! Try this : \nAstronomy picture of the day(apod)\nFun Facts on astronomy\nJokes on astronomy\nSunrise and sunset timings");
         }
+
         [LuisIntent("Wikipedia")]
         public async Task WikiIntent(IDialogContext context, LuisResult result)
         {
             var webClient = new WebClient();
-            var pageSourceCode = webClient.DownloadString("http://en.wikipedia.org/w/api.php?format=xml&action=query&prop=extracts&exsentences=2&titles=" + result.Query + "&redirects=true");
+            var pageSourceCode = webClient.DownloadString("http://en.wikipedia.org/w/api.php?format=xml&action=query&prop=extracts&exsentences=2&titles=" + result.Query + "&redirects=true");        
             XmlDocument doc = new XmlDocument();
             doc.LoadXml(pageSourceCode);
             var fnode = doc.GetElementsByTagName("extract")[0];
@@ -65,45 +65,94 @@ namespace AstronomyBot.Dialogs
                 await context.PostAsync("Try about astronomy");
             }
         }
-        int countjoke = 0;
-        int countfact = 0;
 
 
+
+        /*string path1 = @"C:\Users\NAVYA\source\repos\AstronomyBot\AstronomyBot\Joke.xlsx";
+          _Application excel = new _Excel.Application();
+          Workbook wb;
+          Worksheet ws;
+          wb = excel.Workbooks.Open(path1);
+          ws = wb.Worksheets[1];
+          Random number1 = new Random();
+          int i = number1.Next(1, 32);
+          if (ws.Cells[i, 1].Value2 != null)
+          {
+              if (countjoke == 0)
+              {
+                  await context.PostAsync("I've got one for you: ");
+              }
+              countjoke++;
+              await context.PostAsync($"Q : {ws.Cells[i, 1].Value2}\n A : {ws.Cells[i, 2].Value2}");
+          }*/
+        
         [LuisIntent("Jokes")]
         public async Task JokeIntent(IDialogContext context, LuisResult result)
         {
-            string path1 = @"C:\Users\NAVYA\source\repos\AstronomyBot\AstronomyBot\Joke.xlsx";
-            _Application excel = new _Excel.Application();
-            Workbook wb;
-            Worksheet ws;
-            wb = excel.Workbooks.Open(path1);
-            ws = wb.Worksheets[1];
-            Random number1 = new Random();
-            int i = number1.Next(1, 32);
-            if (ws.Cells[i, 1].Value2 != null)
+            CloudStorageAccount storageAccount = CloudStorageAccount.Parse(
+                Microsoft.Azure.CloudConfigurationManager.GetSetting("cosmostorageaccount_AzureStorageConnectionString"));
+            CloudFileClient fileClient = storageAccount.CreateCloudFileClient();
+            CloudFileShare share = fileClient.GetShareReference("files");
+            if (share.Exists())
             {
-                if (countjoke == 0)
+                CloudFileDirectory rootDir = share.GetRootDirectoryReference();
+                CloudFileDirectory sampleDir = rootDir.GetDirectoryReference("AstroFiles");
+                if (sampleDir.Exists())
                 {
-                    await context.PostAsync("I've got one for you: ");
+                    CloudFile sourceFile = sampleDir.GetFileReference("Joke.txt");
+
+                    if (sourceFile.Exists())
+                    {
+                        if (countjoke == 0)
+                        {
+                            await context.PostAsync("I've got one for you: ");
+                        }
+                        countjoke++;
+                        var lines = string.Format(sourceFile.DownloadText());
+                        Random number = new Random();
+                        int num = number.Next(1, 64);
+                        var linesArray = lines.Split('.');
+                        await context.PostAsync($"{linesArray[num]}");
+                    
                 }
-                countjoke++;
-                await context.PostAsync($"Q : {ws.Cells[i, 1].Value2}\n A : {ws.Cells[i, 2].Value2}");
+                }
             }
+
         }
 
         [LuisIntent("Facts")]
-        public async Task FactIntent(IDialogContext context, LuisResult result)
+        public async Task FactIntent(IDialogContext context, IAwaitable<IMessageActivity> activity, LuisResult result)
         {
-            string[] lines = File.ReadAllLines(@"C:\Users\NAVYA\source\repos\AstronomyBot\AstronomyBot\Facts.txt");
-            Random number = new Random();
-            int num = number.Next(1, 57);
-            if (countfact == 0)
+           
+            CloudStorageAccount storageAccount = CloudStorageAccount.Parse(
+                Microsoft.Azure.CloudConfigurationManager.GetSetting("cosmostorageaccount_AzureStorageConnectionString"));
+            CloudFileClient fileClient = storageAccount.CreateCloudFileClient();
+            CloudFileShare share = fileClient.GetShareReference("files");
+            if (share.Exists())
             {
-                await context.PostAsync("Here's something interesting:");
+                CloudFileDirectory rootDir = share.GetRootDirectoryReference();
+                CloudFileDirectory sampleDir = rootDir.GetDirectoryReference("AstroFiles");
+                if (sampleDir.Exists())
+                {
+                    CloudFile sourceFile = sampleDir.GetFileReference("Facts.txt");
+
+                    if (sourceFile.Exists())
+                    {
+                        if (countfact == 0)
+                        {
+                            await context.PostAsync("Here's something interesting:");
+                        }
+                        countfact++;
+                        var lines = string.Format(sourceFile.DownloadText());
+                        var linesArray = lines.Split('.');                    
+                        Random number = new Random();
+                        int num = number.Next(1, 57);
+                        await context.PostAsync($"{linesArray[num]}");
+                    }
+                }
             }
-            countfact++;
-            await context.PostAsync($"{lines[num]}");
         }
+
 
         [LuisIntent("Sunset")]
         public async Task SunsetIntent(IDialogContext context, LuisResult result)
@@ -131,7 +180,7 @@ namespace AstronomyBot.Dialogs
 
         public async Task<Attachment> GetWikiAttachemnt(string res, string query)
         {
-            var heroCard = new HeroCard
+            var heroCard = new HeroCard       
             {
                 Subtitle = res,
                 Buttons = new List<CardAction> { new CardAction(ActionTypes.OpenUrl, "Learn More", value: "http://en.wikipedia.org/wiki/" + query) }
